@@ -14,8 +14,6 @@ conda install -c conda-forge pyecharts duckdb jupyter
 
 ## with python venv
 
-'
-
 ```bash
 python -m venv heatmap
 # for windows
