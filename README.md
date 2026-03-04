@@ -9,7 +9,7 @@ This repository contains data visualisations of the data-acquisition frequency f
 ```bash
 conda create -n dts-heatmap python=3.11 # will create a virtual environment
 conda activate dts-heatmap # will activate the virtual environment
-conda install -c conda-forge pyecharts duckdb jupyter
+conda install -c conda-forge pyecharts duckdb pandas jupyter
 ```
 
 ## with python venv
@@ -21,7 +21,7 @@ heatmap\Scripts\activate
 # for linux/macos
 source heatmap/bin/activate
 # install the dependencies
-pip install pyecharts duckdb jupyter
+pip install pyecharts duckdb pandas jupyter
 ```
 
 Following managing the environment, spin up your favourite IDE and run the cells in the notebook.
