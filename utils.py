@@ -11,6 +11,22 @@ from pyecharts import options as opts
 from pyecharts.commons.utils import JsCode
 from pyecharts.render.display import HTML
 
+days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+]
+
 
 def list_options(data_path: str) -> dict[str, list[str]]:
     """
@@ -137,25 +153,8 @@ def plot_calendar(data, title, upper_range) -> HTML:
                 pos_left="60",
                 pos_right="60",
                 yearlabel_opts=opts.CalendarYearLabelOpts(is_show=True, margin=40),
-                daylabel_opts=opts.CalendarDayLabelOpts(
-                    name_map=["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-                ),
-                monthlabel_opts=opts.CalendarMonthLabelOpts(
-                    name_map=[
-                        "Jan",
-                        "Feb",
-                        "Mar",
-                        "Apr",
-                        "May",
-                        "Jun",
-                        "Jul",
-                        "Aug",
-                        "Sep",
-                        "Oct",
-                        "Nov",
-                        "Dec",
-                    ]
-                ),
+                daylabel_opts=opts.CalendarDayLabelOpts(name_map=days),
+                monthlabel_opts=opts.CalendarMonthLabelOpts(name_map=months),
             ),
         )
         .add(
@@ -168,25 +167,8 @@ def plot_calendar(data, title, upper_range) -> HTML:
                 pos_left="60",
                 pos_right="60",
                 yearlabel_opts=opts.CalendarYearLabelOpts(is_show=True, margin=40),
-                daylabel_opts=opts.CalendarDayLabelOpts(
-                    name_map=["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-                ),
-                monthlabel_opts=opts.CalendarMonthLabelOpts(
-                    name_map=[
-                        "Jan",
-                        "Feb",
-                        "Mar",
-                        "Apr",
-                        "May",
-                        "Jun",
-                        "Jul",
-                        "Aug",
-                        "Sep",
-                        "Oct",
-                        "Nov",
-                        "Dec",
-                    ]
-                ),
+                daylabel_opts=opts.CalendarDayLabelOpts(name_map=days),
+                monthlabel_opts=opts.CalendarMonthLabelOpts(name_map=months),
             ),
         )
         .set_global_opts(
