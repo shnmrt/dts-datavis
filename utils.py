@@ -201,6 +201,7 @@ def plot_calendar(data, title, upper_range) -> HTML:
             legend_opts=opts.LegendOpts(is_show=False),
         )
     )
+    calendar.render(f"{title}_calendar.html")
     return calendar.render_notebook()
 
 
@@ -320,6 +321,7 @@ def bin_dataframe(dataframe: pd.DataFrame, bin_size: int = 1) -> pd.DataFrame:
     """
     # Filter out LAF values below 0
     dataframe = dataframe[dataframe.index >= 0].copy()
+    dataframe = dataframe[dataframe.index <= 2400].copy()
 
     # Bin LAF values by specified bin_size
     dataframe["LAF_bin"] = dataframe.index.to_series().apply(
@@ -334,26 +336,23 @@ def bin_dataframe(dataframe: pd.DataFrame, bin_size: int = 1) -> pd.DataFrame:
 
 
 def plot_heatmap(
-    dataframe: pd.DataFrame, title="A title", max_temp=80, min_temp=0
+    dataframe: pd.DataFrame, title="A title", max_temp=80, min_temp=0, well_top=0
 ) -> HTML:
     """
     Plot a heatmap of temperature data with LAF on the y-axis and timestamps on the x-axis.
-
     Args:
         dataframe: DataFrame with LAF as index and datetime columns containing TMP values.
         title: Title to display at the top of the heatmap.
         max_temp: Maximum temperature value for the visual map color scale.
         min_temp: Minimum temperature value for the visual map color scale.
-
+        well_top: Value subtracted from left Y-axis labels to compute the right (secondary) Y-axis labels.
     Returns:
         Rendered notebook visualization of the heatmap.
     """
-
     # Prepare data for heatmap: [x_index, y_index, value]
     heatmap_data = []
     columns = dataframe.columns.tolist()
     laf_values = dataframe.index.tolist()
-
     for x_idx, col in enumerate(columns):
         for y_idx, laf in enumerate(laf_values):
             value = dataframe.loc[laf, col]
@@ -366,6 +365,7 @@ def plot_heatmap(
         for col in columns
     ]
     y_labels = [str(laf) for laf in laf_values]
+    secondary_y_labels = [str(round(float(laf) - well_top)) for laf in laf_values]
 
     heatmap = (
         HeatMap(init_opts=opts.InitOpts(width="1200px", height="800px"))
@@ -385,7 +385,6 @@ def plot_heatmap(
                 is_calculable=True,
                 orient="horizontal",
                 pos_left="center",
-                # pos_top="center",
                 pos_bottom="0px",
             ),
             xaxis_opts=opts.AxisOpts(
@@ -424,8 +423,55 @@ def plot_heatmap(
             ],
         )
     )
+
     heatmap.options["grid"] = [
-        {"left": "60px", "right": "80px", "top": "80px", "bottom": "170px"}
+        {"left": "60px", "right": "100px", "top": "80px", "bottom": "170px"}
     ]
 
+    # Override xAxis to prevent pyecharts from conflicting with yAxis override
+    heatmap.options["xAxis"] = [
+        {
+            "type": "category",
+            "data": x_labels,
+            "axisLabel": {"rotate": 45, "fontSize": 8},
+            # "name": "Measurement Timestamp",
+            # "nameLocation": "middle",
+            # "nameGap": 40,
+            # "nameTextStyle": {"fontSize": 12},
+        }
+    ]
+
+    # Override yAxis to inject primary (left) + secondary (right) axes
+    heatmap.options["yAxis"] = [
+        # Primary axis (left) — original LAF values
+        {
+            "type": "category",
+            "data": y_labels,
+            "inverse": True,
+            "axisLabel": {"fontSize": 8},
+            "position": "left",
+            "name": "Length Along Fiber (m)",
+            "nameLocation": "middle",
+            "nameGap": 40,
+            "nameRotate": 90,
+            "nameTextStyle": {"fontSize": 12},
+        },
+        # Secondary axis (right) — LAF values offset by origin
+        {
+            "type": "category",
+            "data": secondary_y_labels,
+            "inverse": True,
+            "axisLabel": {"fontSize": 8},
+            "position": "right",
+            "axisLine": {"show": True},
+            "splitLine": {"show": False},
+            "name": "Length along well (m)",
+            "nameLocation": "middle",
+            "nameGap": 10,
+            "nameRotate": 90,
+            "nameTextStyle": {"fontSize": 12},
+        },
+    ]
+
+    heatmap.render(f"{title}.html")
     return heatmap.render_notebook()
